@@ -24,3 +24,9 @@ def download_prices(ticker: str, start: str, end: str) -> pd.DataFrame:
         raise ValueError(f"No data for {ticker} between {start} and {end}")
     out = df[["Close"]].copy().dropna()
     return out
+
+def add_indicators(df: pd.DataFrame, short_w: int, long_w: int) -> pd.DataFrame:
+    df = df.copy()
+    df["SMA_short"] = df["Close"].rolling(short_w, min_periods=short_w).mean()
+    df["SMA_long"]  = df["Close"].rolling(long_w,  min_periods=long_w).mean()
+    return df
