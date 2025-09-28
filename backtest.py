@@ -30,3 +30,11 @@ def add_indicators(df: pd.DataFrame, short_w: int, long_w: int) -> pd.DataFrame:
     df["SMA_short"] = df["Close"].rolling(short_w, min_periods=short_w).mean()
     df["SMA_long"]  = df["Close"].rolling(long_w,  min_periods=long_w).mean()
     return df
+
+def generate_signals(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    df["Signal"] = 0
+    ok = df["SMA_short"].notna() & df["SMA_long"].notna()
+    df.loc[ok, "Signal"] = (df.loc[ok, "SMA_short"] > df.loc[ok, "SMA_long"]).astype(int)
+    df["Position"] = df["Signal"].diff().fillna(0)
+    return df
