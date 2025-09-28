@@ -17,3 +17,10 @@ LONG_WINDOW  = 100
 INITIAL_CAPITAL = 10_000
 PLOT_PATH   = "equity_curve.png"
 REPORT_PATH = "backtest_summary.txt"
+
+def download_prices(ticker: str, start: str, end: str) -> pd.DataFrame:
+    df = yf.download(ticker, start=start, end=end, auto_adjust=True, progress=False)
+    if df.empty:
+        raise ValueError(f"No data for {ticker} between {start} and {end}")
+    out = df[["Close"]].copy().dropna()
+    return out
