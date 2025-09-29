@@ -72,6 +72,19 @@ See plot: {plot_path}
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(text)
 
+
+def performance_metrics(df: pd.DataFrame) -> dict:
+    eps = 1e-12
+    total_return = (df["STR_curve"].iloc[-1] - 1.0) * 100.0
+    vol = df["Strat_ret"].std()
+    sharpe = 0.0 if (vol is None or vol < eps) else (df["Strat_ret"].mean() / vol) * math.sqrt(252)
+    max_dd = (df["STR_curve"] / df["STR_curve"].cummax() - 1.0).min() * 100.0
+    return {
+        "total_return_pct": float(total_return),
+        "sharpe": float(sharpe),
+        "max_drawdown_pct": float(max_dd),
+    }
+
 def main():
     df = download_prices(TICKER, START_DATE, END_DATE)
     df = add_indicators(df, SHORT_WINDOW, LONG_WINDOW)
