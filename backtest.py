@@ -56,3 +56,18 @@ def plot_curves(df: pd.DataFrame, plot_path: str, initial_capital: float, ticker
     plt.xlabel("Date"); plt.ylabel("Portfolio Value ($)")
     plt.tight_layout(); plt.savefig(plot_path, bbox_inches="tight"); plt.close()
 
+def write_report(report_path: str, ticker: str, start: str, end: str, metrics: dict, plot_path: str):
+    text = f"""
+Momentum SMA Crossover Backtest
+
+Ticker: {ticker}
+Period: {start} to {end}
+
+Total Return (Strategy): {metrics['total_return_pct']:.2f}%
+Sharpe (annualized): {metrics['sharpe']:.2f}
+Max Drawdown: {metrics['max_drawdown_pct']:.2f}%
+
+See plot: {plot_path}
+""".strip() + "\n"
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(text)
