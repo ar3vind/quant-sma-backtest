@@ -71,3 +71,17 @@ See plot: {plot_path}
 """.strip() + "\n"
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(text)
+
+def main():
+    df = download_prices(TICKER, START_DATE, END_DATE)
+    df = add_indicators(df, SHORT_WINDOW, LONG_WINDOW)
+    df = generate_signals(df)
+    df = compute_returns(df)
+    metrics = performance_metrics(df)
+    plot_curves(df, PLOT_PATH, INITIAL_CAPITAL, TICKER)
+    write_report(REPORT_PATH, TICKER, START_DATE, END_DATE, metrics, PLOT_PATH)
+    print(f"Saved: {PLOT_PATH}, {REPORT_PATH}")
+    print(f"Return: {metrics['total_return_pct']:.2f}%  Sharpe: {metrics['sharpe']:.2f}  MaxDD: {metrics['max_drawdown_pct']:.2f}%")
+
+if __name__ == "__main__":
+    main()
