@@ -47,3 +47,12 @@ def compute_returns(df: pd.DataFrame) -> pd.DataFrame:
     df["BH_curve"]   = (1.0 + df["Close_ret"]).cumprod()
     df["STR_curve"]  = (1.0 + df["Strat_ret"]).cumprod()
     return df
+
+def plot_curves(df: pd.DataFrame, plot_path: str, initial_capital: float, ticker: str):
+    plt.figure(figsize=(10, 6))
+    plt.plot(df.index, df["STR_curve"] * initial_capital, label="Strategy")
+    plt.plot(df.index, df["BH_curve"]  * initial_capital, label="Buy & Hold")
+    plt.legend(); plt.title(f"{ticker} Strategy vs Buy & Hold")
+    plt.xlabel("Date"); plt.ylabel("Portfolio Value ($)")
+    plt.tight_layout(); plt.savefig(plot_path, bbox_inches="tight"); plt.close()
+
