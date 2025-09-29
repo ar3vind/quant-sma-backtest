@@ -38,3 +38,12 @@ def generate_signals(df: pd.DataFrame) -> pd.DataFrame:
     df.loc[ok, "Signal"] = (df.loc[ok, "SMA_short"] > df.loc[ok, "SMA_long"]).astype(int)
     df["Position"] = df["Signal"].diff().fillna(0)
     return df
+
+def compute_returns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    df["Close_ret"]  = df["Close"].pct_change().fillna(0.0)
+    df["Signal_lag"] = df["Signal"].shift(1).fillna(0.0)  # avoid look-ahead
+    df["Strat_ret"]  = df["Close_ret"] * df["Signal_lag"]
+    df["BH_curve"]   = (1.0 + df["Close_ret"]).cumprod()
+    df["STR_curve"]  = (1.0 + df["Strat_ret"]).cumprod()
+    return df
